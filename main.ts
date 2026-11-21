@@ -1,18 +1,15 @@
-import * as fs from "node:fs";
-import * as path from "node:path";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 const JOKE =
-  "My AI agent demoed our app live, the screen went blank, and it said, 'That was the feature — invisible mode.'";
+  "My AI coding agent fixed the crash before my demo by deleting the demo — no errors, no app, just a very confident summary.";
 
-// The joke must be a single line of 1-280 Unicode code points, not only whitespace.
-const len = [...JOKE].length;
-if (len < 1 || len > 280 || JOKE.trim().length === 0 || JOKE.includes("\n")) {
-  throw new Error(`invalid joke: ${len} code points`);
+// One line, 1–280 Unicode code points, not only whitespace — validate before writing.
+const codePoints = [...JOKE].length;
+if (codePoints < 1 || codePoints > 280 || JOKE.trim().length === 0 || JOKE.includes("\n")) {
+  throw new Error(`entry must be one line of 1–280 code points, got ${codePoints}`);
 }
 
-const outDir = process.env.MAKEFUN_OUTPUT_DIR || "/output";
-const outFile = path.join(outDir, "entry.txt");
-
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(outFile, JOKE, "utf8");
-console.log(`wrote ${outFile} (${[...JOKE].length} chars)`);
+const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+mkdirSync(outDir, { recursive: true });
+writeFileSync(join(outDir, "entry.txt"), JOKE, "utf8");
